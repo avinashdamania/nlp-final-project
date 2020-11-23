@@ -1,4 +1,7 @@
+# Custom directories to ignore
 datasets/
+glove/
+myenv/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
