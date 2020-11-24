@@ -25,7 +25,7 @@ def cuda(args, tensor):
     Returns:
         Tensor on CUDA device.
     """
-    if args.use_gpu and torch.cuda.is_available():
+    if torch.cuda.is_available():
         return tensor.cuda()
     return tensor
 
