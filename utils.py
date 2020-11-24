@@ -12,6 +12,8 @@ import pickle
 import torch
 from tqdm import tqdm
 
+import heapq
+
 
 def cuda(args, tensor):
     """
@@ -136,3 +138,39 @@ def search_span_endpoints(start_probs, end_probs, window=15):
                 max_end_index = end_index
 
     return (max_start_index, max_end_index)
+
+def topk_span_endpoints(start_probs, end_probs, window=15, k=5):
+    """
+    Finds the top k optimal answer spans given start and end probabilities.
+
+    Args:
+        start_probs: Distribution over start positions.
+        end_probs: Distribution over end positions.
+        window: Specifies a context sizefrom which the optimal span endpoint
+            is chosen from. This hyperparameter follows directly from the
+            DrQA paper (https://arxiv.org/abs/1704.00051).
+        k: The number of top answers to return.
+
+    Returns:
+        Top k optimal pairs of starting and ending indices for the answer span. Note that the
+        chosen end index is *inclusive*.
+    """
+    max_start_index = start_probs.index(max(start_probs))
+    max_joint_prob = 0.
+
+    heap = []
+
+    for end_index in range(len(end_probs)):
+        if max_start_index <= end_index <= max_start_index + window:
+            joint_prob = start_probs[max_start_index] * end_probs[end_index]
+            if len(heap) < k:
+                heapq.heappush(heap, (joint_prob, max_start_index, end_index))
+            else:
+                curr_heap_min, curr_min_start, curr_min_end = heapq.heappop(heap)
+                if joint_prob > curr_heap_min:
+                    heapq.heappush(heap, (joint_prob, max_start_index, end_index))
+                else:
+                    heapq.heappush(heap, (curr_heap_min, curr_min_start, curr_min_end))
+
+    heap.sort(reverse=True)
+    return heap

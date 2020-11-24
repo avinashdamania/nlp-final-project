@@ -34,7 +34,10 @@ from tqdm import tqdm
 from data import QADataset, Tokenizer, Vocabulary
 
 from model import BaselineReader
-from utils import cuda, search_span_endpoints, unpack
+from utils import cuda, search_span_endpoints, topk_span_endpoints, unpack
+
+import spacy
+sp = spacy.load("en_core_web_sm")
 
 
 _TQDM_BAR_SIZE = 75
@@ -427,9 +430,19 @@ def write_predictions(args, model, dataset):
                 # (start, end) pair that has the highest joint probability.
                 start_probs = unpack(batch_start_probs[j])
                 end_probs = unpack(batch_end_probs[j])
-                start_index, end_index = search_span_endpoints(
-                        start_probs, end_probs
-                )
+
+                # original way
+                # start_index, end_index = search_span_endpoints(start_probs, end_probs)
+
+                # new way using our custom topk_span_endpoints function
+                max_prob, start_index, end_index = topk_span_endpoints(start_probs, end_probs)[0]
+
+        #         doc = sp("".join("Apple is looking at buying U.K. startup for $1 billion"))
+        # for ent in doc.ents:
+        #     print(ent.text)
+
+        #         question_ents = sp(question).ents
+
                 
                 # Grab predicted span.
                 pred_span = ' '.join(passage[start_index:(end_index + 1)])
