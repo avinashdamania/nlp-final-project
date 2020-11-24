@@ -12,6 +12,9 @@ from termcolor import colored
 
 from data import QADataset
 
+import spacy
+sp = spacy.load("en_core_web_sm")
+
 
 RULE_LENGTH = 100
 DOC_WIDTH = 100
@@ -113,6 +116,15 @@ def main(args):
         print('[ANSWER]')
         print(_build_string(context[answer_start:(answer_end + 1)]))
         print()
+
+
+        # testing spacy
+        print("TESTING SPACY")
+        doc = sp(context)
+        for ent in doc.ents:
+            print(ent.text)
+
+
 
         print('-' * RULE_LENGTH)
         print()
