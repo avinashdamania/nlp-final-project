@@ -435,20 +435,34 @@ def write_predictions(args, model, dataset):
                 # start_index, end_index = search_span_endpoints(start_probs, end_probs)
 
                 # new way using our custom topk_span_endpoints function
-                max_prob, start_index, end_index = topk_span_endpoints(start_probs, end_probs)[0]
+                topk = topk_span_endpoints(start_probs, end_probs)
+                
+                for max_prob, start_index, end_index  in topk:
+                    pred_span = str(passage[start_index:(end_index + 1)])
+                    entities = sp(pred_span)
+                    # for ent in doc.ents:
+                    #     print(ent.text, ": ", ent.label_)
+
+                    #function that takes start end and get sentence
+                    #run NER/spacy on sentence and compare entities with question
+                        
+
+                    
+                    
+
 
         #         doc = sp("".join("Apple is looking at buying U.K. startup for $1 billion"))
         # for ent in doc.ents:
         #     print(ent.text)
 
-        #         question_ents = sp(question).ents
+                #question_ents = sp(question).ents
 
                 
                 # Grab predicted span.
-                pred_span = ' '.join(passage[start_index:(end_index + 1)])
+                #pred_span = ' '.join(passage[start_index:(end_index + 1)])
 
                 # Add prediction to outputs.
-                outputs.append({'qid': qid, 'answer': pred_span})
+                #outputs.append({'qid': qid, 'answer': pred_span})
 
     # Write predictions to output file.
     with open(args.output_path, 'w+') as f:
