@@ -457,42 +457,32 @@ def write_predictions(args, model, dataset):
                 question_ents = sp(question).ents
                 question_has_ents = len(question_ents) > 0
 
-                for max_prob, start_index, end_index  in topk:
+                heap = []
+
+                for max_prob, start_index, end_index in topk:
                     pred_span = str(passage[start_index:(end_index + 1)])
 
                     if question_has_ents:
                         sent_start, sent_end = get_full_sentence(passage, start_index, end_index)
                         full_sent = str(passage[sent_start+1:(sent_end + 1)])
-                        entities = sp(full_sent)
+                        ans_ents = sp(full_sent)
 
-                        #heap
-                        #sort by how many entities it has in common with the question
-                        #if no entities in common for any answers then no change
+                        common_ents = 0
+                        for ent in ans_ents:
+                            if ent in question_ents:
+                                common_ents += 1
+                        heapq.heappush(heap, (common_ents, max_prob, start_index, end_index))
 
+                # probably want additional logic to not completely sort based on number of common entities
+                # some sort of voting system that takes into account both probabilities and num common entities?
+                final_ans = heapq.heappop(heap)
 
-                    # for ent in entities:
-                    #     print(ent.text, ": ", ent.label_)
-
-                    #function that takes start end and get sentence
-                    #run NER/spacy on sentence and compare entities with question
-                        
-
-                    
-                    
-
-
-        #         doc = sp("".join("Apple is looking at buying U.K. startup for $1 billion"))
-        # for ent in doc.ents:
-        #     print(ent.text)
-
-                #question_ents = sp(question).ents
-
-                
                 # Grab predicted span.
-                #pred_span = ' '.join(passage[start_index:(end_index + 1)])
+                # pred_span = ' '.join(passage[start_index:(end_index + 1)])
+                pred_span = ' '.join(passage[final_ans[2]:(final_ans[3] + 1)])
 
                 # Add prediction to outputs.
-                #outputs.append({'qid': qid, 'answer': pred_span})
+                outputs.append({'qid': qid, 'answer': pred_span})
 
     # Write predictions to output file.
     with open(args.output_path, 'w+') as f:
