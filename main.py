@@ -39,6 +39,7 @@ from utils import cuda, search_span_endpoints, topk_span_endpoints, unpack
 import spacy
 sp = spacy.load("en_core_web_sm")
 
+punc_string = '.!?'
 
 _TQDM_BAR_SIZE = 75
 _TQDM_LEAVE = False
@@ -388,6 +389,21 @@ def evaluate(args, epoch, model, dataset):
     return eval_loss / eval_steps
 
 
+def get_full_sentence(passage, start_index, end_index):
+    #Maybe devalue sentences ending in question mark?
+
+    first_index = start_index
+    last_index = end_index
+
+    while (first_index >= 0 and passage[first_index] not in punc_string):
+        first_index -= 1
+
+    while (last_index < len(passage) and passage[last_index] not in punc_string):
+        last_index += 1
+
+    return first_index, last_index
+        
+
 def write_predictions(args, model, dataset):
     """
     Writes model predictions to an output file. The official QA metrics (EM/F1)
@@ -437,10 +453,24 @@ def write_predictions(args, model, dataset):
                 # new way using our custom topk_span_endpoints function
                 topk = topk_span_endpoints(start_probs, end_probs)
                 
+                question = 'Who won the 2004 Super Bowl?'
+                question_ents = sp(question).ents
+                question_has_ents = len(question_ents) > 0
+
                 for max_prob, start_index, end_index  in topk:
                     pred_span = str(passage[start_index:(end_index + 1)])
-                    entities = sp(pred_span)
-                    # for ent in doc.ents:
+
+                    if question_has_ents:
+                        sent_start, sent_end = get_full_sentence(passage, start_index, end_index)
+                        full_sent = str(passage[sent_start+1:(sent_end + 1)])
+                        entities = sp(full_sent)
+
+                        #heap
+                        #sort by how many entities it has in common with the question
+                        #if no entities in common for any answers then no change
+
+
+                    # for ent in entities:
                     #     print(ent.text, ": ", ent.label_)
 
                     #function that takes start end and get sentence
