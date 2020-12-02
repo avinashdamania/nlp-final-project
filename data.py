@@ -137,7 +137,8 @@ class QADataset(Dataset):
         tokenizer: `Tokenizer` object.
         batch_size: Int. The number of example in a mini batch.
     """
-    def __init__(self, args, path):
+    def __init__(self, args, path, lowercase=True):
+        self.lowercase = lowercase
         self.args = args
         self.meta, self.elems = load_dataset(path)
         self.samples = self._create_samples()
@@ -145,6 +146,7 @@ class QADataset(Dataset):
         self.batch_size = args.batch_size if 'batch_size' in args else 1
         self.pad_token_id = self.tokenizer.pad_token_id \
             if self.tokenizer is not None else 0
+        
 
     def _create_samples(self):
         """
@@ -157,17 +159,31 @@ class QADataset(Dataset):
         samples = []
         for elem in self.elems:
             # Unpack the context paragraph. Shorten to max sequence length.
-            passage = [
-                token.lower() for (token, offset) in elem['context_tokens']
-            ][:self.args.max_context_length]
+            passage = []
+            if self.lowercase:
+                passage = [
+                    token.lower() for (token, offset) in elem['context_tokens']
+                ][:self.args.max_context_length]
+            else:
+                passage = [
+                    token for (token, offset) in elem['context_tokens']
+                ][:self.args.max_context_length]
+
 
             # Each passage has several questions associated with it.
             # Additionally, each question has multiple possible answer spans.
             for qa in elem['qas']:
                 qid = qa['qid']
-                question = [
-                    token.lower() for (token, offset) in qa['question_tokens']
-                ][:self.args.max_question_length]
+                question = []
+                if self.lowercase:
+                    question = [
+                        token.lower() for (token, offset) in qa['question_tokens']
+                    ][:self.args.max_question_length]
+                else:
+                    question = [
+                        token for (token, offset) in qa['question_tokens']
+                    ][:self.args.max_question_length]
+
 
                 # Select the first answer span, which is formatted as
                 # (start_position, end_position), where the end_position

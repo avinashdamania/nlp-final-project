@@ -39,6 +39,8 @@ from utils import cuda, search_span_endpoints, topk_span_endpoints, unpack
 import spacy
 sp = spacy.load("en_core_web_sm")
 
+import heapq
+
 punc_string = '.!?'
 
 _TQDM_BAR_SIZE = 75
@@ -404,7 +406,7 @@ def get_full_sentence(passage, start_index, end_index):
     return first_index, last_index
         
 
-def write_predictions(args, model, dataset):
+def write_predictions(args, model, dataset, dataset_truecase):
     """
     Writes model predictions to an output file. The official QA metrics (EM/F1)
     can be computed using `evaluation.py`. 
@@ -441,6 +443,10 @@ def write_predictions(args, model, dataset):
                 # Find question index and passage.
                 sample_index = args.batch_size * i + j
                 qid, passage, _, _, _ = dataset.samples[sample_index]
+                qid_truecase, passage_truecase, _, _, _ = dataset_truecase.samples[sample_index]
+
+                print("PASSAGE:", passage)
+                print("TRUECASE PASSAGE:", passage_truecase)
 
                 # Unpack start and end probabilities. Find the constrained
                 # (start, end) pair that has the highest joint probability.
@@ -454,8 +460,10 @@ def write_predictions(args, model, dataset):
                 topk = topk_span_endpoints(start_probs, end_probs)
                 
                 question = 'Who won the 2004 Super Bowl?'
-                question_ents = sp(question).ents
+                question_words = [x.lower() for x in question.split()]
+                question_ents = set(sp(question).ents)
                 question_has_ents = len(question_ents) > 0
+                question_is_who_where = ("who" in question_words) or ("where" in question_words)
 
                 heap = []
 
@@ -510,6 +518,8 @@ def main(args):
     # Set up datasets.
     train_dataset = QADataset(args, args.train_path)
     dev_dataset = QADataset(args, args.dev_path)
+    train_dataset_truecase = QADataset(args, args.train_path, False)
+    dev_dataset_truecase = QADataset(args, args.dev_path, False)
 
     # Create vocabulary and tokenizer.
     vocabulary = Vocabulary(train_dataset.samples, args.vocab_size)
@@ -584,7 +594,7 @@ def main(args):
     if args.do_test:
         # Write predictions to the output file. Use the printed command
         # below to obtain official EM/F1 metrics.
-        write_predictions(args, model, dev_dataset)
+        write_predictions(args, model, dev_dataset, dev_dataset_truecase)
         eval_cmd = (
             'python3 evaluate.py '
             f'--dataset_path {args.dev_path} '
