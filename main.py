@@ -443,10 +443,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 # Find question index and passage.
                 sample_index = args.batch_size * i + j
                 qid, passage, _, _, _ = dataset.samples[sample_index]
-                qid_truecase, passage_truecase, _, _, _ = dataset_truecase.samples[sample_index]
-
-                print("PASSAGE:", passage)
-                print("TRUECASE PASSAGE:", passage_truecase)
+                _, passage_truecase, question_truecase, _, _ = dataset_truecase.samples[sample_index]
 
                 # Unpack start and end probabilities. Find the constrained
                 # (start, end) pair that has the highest joint probability.
@@ -459,7 +456,8 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 # new way using our custom topk_span_endpoints function
                 topk = topk_span_endpoints(start_probs, end_probs)
                 
-                question = 'Who won the 2004 Super Bowl?'
+                # question = 'Who won the 2004 Super Bowl?'
+                question = question_truecase
                 question_words = [x.lower() for x in question.split()]
                 question_ents = set(sp(question).ents)
                 question_has_ents = len(question_ents) > 0
