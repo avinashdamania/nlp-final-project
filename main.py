@@ -16,6 +16,18 @@ Usage:
         --do_train \
         --do_test
 
+    Testing write_predictions:
+    python3 main.py \
+        --use_gpu \
+        --model "baseline" \
+        --model_path "baseline_small_squad.pt" \
+        --train_path "datasets/squad_train.jsonl.gz" \
+        --dev_path "datasets/squad_dev.jsonl.gz" \
+        --output_path "baseline_small_squad_predictions.txt" \
+        --hidden_dim 128 \
+        --bidirectional \
+        --do_test
+
 Author:
     Shrey Desai and Yasumasa Onoe
 """
@@ -38,6 +50,13 @@ from utils import cuda, search_span_endpoints, topk_span_endpoints, unpack
 
 import spacy
 sp = spacy.load("en_core_web_sm")
+
+interrogative_dict = {
+  "who": "PERSON",
+  "where": "GRE",
+  "what": "",
+  "which": ""
+}
 
 import heapq
 
@@ -462,10 +481,14 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 question_ents = set(sp(" ".join(question)).ents)
                 question_has_ents = len(question_ents) > 0
                 
-                #print(question_words)
-
-                #g = 3/0
-
+                first_interrogative = ''
+                for word in question_words:
+                    if word in interrogative_dict:
+                        first_interrogative = word
+                        print(word, ': ', question_words)
+                        break
+                
+                
                 question_is_who_where = ("who" in question_words) or ("where" in question_words)
 
                 #who - PERSON, NORP, ORG
