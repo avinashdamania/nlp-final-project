@@ -34,7 +34,7 @@ from tqdm import tqdm
 from data import QADataset, Tokenizer, Vocabulary
 
 from model import BaselineReader
-from utils import cuda, search_span_endpoints, topk_span_endpoints, unpack
+from utils import cuda, search_span_endpoints, topk_span_endpoints, unpack, calculate_multiplier_increments
 
 import spacy
 sp = spacy.load("en_core_web_sm")
@@ -493,13 +493,27 @@ def write_predictions(args, model, dataset, dataset_truecase):
                         for ent in ans_ents:
                             if ent in question_ents:
                                 common_ents += 1
-                        heapq.heappush(heap, (common_ents, max_prob, start_index, end_index))
+                        heapq.heappush(heap, (-common_ents, max_prob, start_index, end_index))
+
+
+
+                multipliers = calculate_multiplier_increments(5)
+                second_heap = []
+                i = 0
+                while heap:
+                    temp = heapq.heappop(heap)
+                    temp[1] *= multipliers[i]
+                    temp = (-temp[1], temp[2], temp[3])
+                    heapq.heappush(second_heap, temp)
+                    i += 1
+
+                
 
                 # probably want additional logic to not completely sort based on number of common entities
                 # some sort of voting system that takes into account both probabilities and num common entities?
                 final_start, final_end = -1, -1
-                if heap:
-                    temp = heapq.heappop(heap)
+                if second_heap:
+                    temp = heapq.heappop(second_heap)
                     final_start, final_end = temp[2], temp[3]
                 else:
                     temp = topk[0]

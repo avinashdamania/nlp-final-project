@@ -174,3 +174,13 @@ def topk_span_endpoints(start_probs, end_probs, window=15, k=5):
 
     heap.sort(reverse=True)
     return heap
+
+def calculate_multiplier_increments(k, lower=1.0, upper=1.5):
+    multipliers = []
+    curr = lower
+    increment = (upper - lower) / k
+    while curr < upper:
+        curr += increment
+        multipliers.append(curr)
+    return multipliers[::-1]
+
