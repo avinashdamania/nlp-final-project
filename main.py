@@ -502,8 +502,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 i = 0
                 while heap:
                     temp = heapq.heappop(heap)
-                    temp[1] *= multipliers[i]
-                    temp = (-temp[1], temp[2], temp[3])
+                    temp = (-(temp[1] * multipliers[i]), temp[2], temp[3])
                     heapq.heappush(second_heap, temp)
                     i += 1
 
