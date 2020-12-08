@@ -461,7 +461,18 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 question_words = [x.lower() for x in question]
                 question_ents = set(sp(" ".join(question)).ents)
                 question_has_ents = len(question_ents) > 0
+                
+                #print(question_words)
+
+                #g = 3/0
+
                 question_is_who_where = ("who" in question_words) or ("where" in question_words)
+
+                #who - PERSON, NORP, ORG
+                #where - FAC, GPE, LOC
+                    # still weight but not as high EVENT
+
+                #create mapping from question interrogative to NER
 
                 heap = []
 
