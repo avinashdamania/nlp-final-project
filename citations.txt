@@ -1,0 +1,3 @@
+https://spacy.io/api/annotation#named-entities
+--List of all entities
+
