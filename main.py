@@ -465,6 +465,11 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 heap = []
 
+                probs = []
+                for temp in topk:
+                    probs.append(temp[0])
+                print("PROBS:", probs)
+
                 for max_prob, start_index, end_index in topk:
                     pred_span = str(passage[start_index:(end_index + 1)])
 
