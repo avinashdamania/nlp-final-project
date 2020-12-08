@@ -458,8 +458,8 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 
                 # question = 'Who won the 2004 Super Bowl?'
                 question = question_truecase
-                question_words = [x.lower() for x in question.split()]
-                question_ents = set(sp(question).ents)
+                question_words = [x.lower() for x in question]
+                question_ents = set(sp(" ".join(question)).ents)
                 question_has_ents = len(question_ents) > 0
                 question_is_who_where = ("who" in question_words) or ("where" in question_words)
 
@@ -481,7 +481,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 # probably want additional logic to not completely sort based on number of common entities
                 # some sort of voting system that takes into account both probabilities and num common entities?
-                final_ans = heapq.heappop(heap)
+                final_ans = heapq.heappop(heap) if heap else topk[0]
 
                 # Grab predicted span.
                 # pred_span = ' '.join(passage[start_index:(end_index + 1)])
