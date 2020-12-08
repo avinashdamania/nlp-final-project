@@ -492,11 +492,18 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 # probably want additional logic to not completely sort based on number of common entities
                 # some sort of voting system that takes into account both probabilities and num common entities?
-                final_ans = heapq.heappop(heap) if heap else topk[0]
+                final_start, final_end = -1, -1
+                if heap:
+                    temp = heapq.heappop(heap)
+                    final_start, final_end = temp[2], temp[3]
+                else:
+                    temp = topk[0]
+                    final_start, final_end = temp[1], temp[2]
+                
 
                 # Grab predicted span.
                 # pred_span = ' '.join(passage[start_index:(end_index + 1)])
-                pred_span = ' '.join(passage[final_ans[2]:(final_ans[3] + 1)])
+                pred_span = ' '.join(passage[final_start:(final_end + 1)])
 
                 # Add prediction to outputs.
                 outputs.append({'qid': qid, 'answer': pred_span})
