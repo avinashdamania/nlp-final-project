@@ -481,15 +481,18 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 question_ents = set(sp(" ".join(question)).ents)
                 question_has_ents = len(question_ents) > 0
                 
+                #Finds the first interrogative (who, where, what) in the sentence
+                #Use this to match with NER in answer span
                 first_interrogative = ''
                 for word in question_words:
                     if word in interrogative_dict:
                         first_interrogative = word
-                        print(word, ': ', question_words)
+                       # print(word, ': ', question_words)
                         break
                 
-                
-                question_is_who_where = ("who" in question_words) or ("where" in question_words)
+                # if first_interrogative == 'who':
+                #     print('who')
+
 
                 #who - PERSON, NORP, ORG
                 #where - FAC, GPE, LOC
