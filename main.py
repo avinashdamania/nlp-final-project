@@ -505,11 +505,11 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 # print("PROBS:", probs)
 
                 for max_prob, start_index, end_index in topk:
-                    pred_span = str(passage[start_index:(end_index + 1)])
+                    pred_span = str(passage_truecase[start_index:(end_index + 1)])
 
                     if question_has_ents:
-                        sent_start, sent_end = get_full_sentence(passage, start_index, end_index)
-                        full_sent = str(passage[sent_start+1:(sent_end + 1)])
+                        sent_start, sent_end = get_full_sentence(passage_truecase, start_index, end_index)
+                        full_sent = str(passage_truecase[sent_start+1:(sent_end + 1)])
                         ans_ents = sp(full_sent)
 
                         common_ents = 0
@@ -520,23 +520,23 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 
                 multipliers = calculate_multiplier_increments(5)
                 second_heap = []
-                # i = 0
-                # while heap:
-                #     temp = heapq.heappop(heap)
-                #     temp = (-(temp[1] * multipliers[i]), temp[2], temp[3])
-                #     heapq.heappush(second_heap, temp)
-                #     i += 1
+                topk_index = 0
+                while heap:
+                    temp = heapq.heappop(heap)
+                    temp = (-(temp[1] * multipliers[topk_index]), temp[2], temp[3])
+                    heapq.heappush(second_heap, temp)
+                    topk_index += 1
                 # print(second_heap)
 
                 # probably want additional logic to not completely sort based on number of common entities
                 # some sort of voting system that takes into account both probabilities and num common entities?
                 final_start, final_end = -1, -1
-                if heap:
-                    temp = heapq.heappop(heap)
-                    final_start, final_end = temp[2], temp[3]
+                if second_heap:
+                    temp2 = heapq.heappop(second_heap)
+                    final_start, final_end = temp2[1], temp2[2]
                 else:
-                    temp = topk[0]
-                    final_start, final_end = temp[1], temp[2]
+                    temp2 = topk[0]
+                    final_start, final_end = temp2[1], temp2[2]
                 
 
                 # Grab predicted span.
