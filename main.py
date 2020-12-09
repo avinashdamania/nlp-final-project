@@ -505,11 +505,11 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 # print("PROBS:", probs)
 
                 for max_prob, start_index, end_index in topk:
-                    pred_span = str(passage_truecase[start_index:(end_index + 1)])
+                    pred_span = str(passage[start_index:(end_index + 1)])
 
                     if question_has_ents:
-                        sent_start, sent_end = get_full_sentence(passage_truecase, start_index, end_index)
-                        full_sent = str(passage_truecase[sent_start+1:(sent_end + 1)])
+                        sent_start, sent_end = get_full_sentence(passage, start_index, end_index)
+                        full_sent = str(passage[sent_start+1:(sent_end + 1)])
                         ans_ents = sp(full_sent)
 
                         common_ents = 0
@@ -544,7 +544,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 # Grab predicted span.
                 # pred_span = ' '.join(passage[start_index:(end_index + 1)])
-                pred_span = ' '.join(passage_truecase[final_start:(final_end + 1)])
+                pred_span = ' '.join(passage[final_start:(final_end + 1)])
 
                 # Add prediction to outputs.
                 outputs.append({'qid': qid, 'answer': pred_span})
