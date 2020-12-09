@@ -596,6 +596,9 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
                 old_start, old_end = answer_would_have_been[1], answer_would_have_been[2]
                 old_pred_span = ' '.join(passage[old_start:(old_end + 1)])
 
+                pred_span = pred_span.replace(" - ", "-")
+                old_pred_span = old_pred_span.replace(" - ", "-")
+
                 if old_pred_span != pred_span:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                     print("we got different answers")
@@ -640,7 +643,7 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
 
 
                 # Add prediction to outputs.
-                pred_span = pred_span.replace(" - ", "-")
+                
                 outputs.append({'qid': qid, 'answer': pred_span})
 
     # Write predictions to output file.
