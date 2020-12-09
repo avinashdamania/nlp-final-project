@@ -564,8 +564,8 @@ def write_predictions(args, model, dataset, dataset_truecase):
                         break
 
                 old_topk = topk
-                lower = 0.9
-                upper = 1.0              
+                lower = 1.0
+                upper = 1.075              
 
                 #print(question_words)
 
