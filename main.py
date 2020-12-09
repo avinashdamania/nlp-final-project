@@ -527,7 +527,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 #create mapping from question interrogative to NER
 
-               second_heap = count_common_entities(topk, passage_truecase, question_has_ents, question_ents_text)
+                second_heap = count_common_entities(topk, passage_truecase, question_has_ents, question_ents_text)
                 # print(second_heap)
 
                 # probably want additional logic to not completely sort based on number of common entities
