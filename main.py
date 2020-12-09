@@ -434,20 +434,19 @@ def compare_interrogatives(increments, topk, passage_truecase, first_interrogati
     if not first_interrogative == 'who' and not first_interrogative == 'where':
         return sorted(topk)
 
-
     for max_prob, start_index, end_index in topk:
         pred_span = str(passage_truecase[start_index:(end_index + 1)])
         ans_ents = sp(pred_span).ents
-        print(first_interrogative)
         #list of entity labels that match the interrogative
         mapped_ents = interrogative_dict[first_interrogative]
-
+       # print(pred_span)
         matching_ents = 0
         for ent in ans_ents:
             if ent.label_ in mapped_ents:
                 matching_ents += 1
-            print(ent.label_)
-            heapq.heappush(heap, (matching_ents, max_prob, start_index, end_index))
+           # print(ent.text, ": ", ent.label_)
+        
+        heapq.heappush(heap, (matching_ents, max_prob, start_index, end_index))
 
     
     multipliers = calculate_multiplier_increments(increments)
@@ -560,15 +559,15 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 old_topk = topk
 
-                print(question_words)
+                #print(question_words)
 
                 topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text)
 
-                print(topk)
+               # print(topk)
 
                 topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative)
 
-                print(topk)
+               # print(topk)
 
 
                 # probably want additional logic to not completely sort based on number of common entities
