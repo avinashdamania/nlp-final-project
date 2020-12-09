@@ -536,7 +536,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 final_start, final_end = -1, -1
                 if second_heap:
                     temp = heapq.heappop(second_heap)
-                    final_start, final_end = temp[2], temp[3]
+                    final_start, final_end = temp[1], temp[2]
                 else:
                     temp = topk[0]
                     final_start, final_end = temp[1], temp[2]
