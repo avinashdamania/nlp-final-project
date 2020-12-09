@@ -574,7 +574,7 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
 
                 # print("1:", topk)
 
-                # topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text, lower, upper)
+                topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text, lower, upper)
 
                 # print("2:", topk)
 
@@ -595,6 +595,9 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
                 answer_would_have_been = old_topk[0]
                 old_start, old_end = answer_would_have_been[1], answer_would_have_been[2]
                 old_pred_span = ' '.join(passage[old_start:(old_end + 1)])
+
+                print("hmm:", gold, old_pred_span, pred_span)
+                print("asdf")
 
                 if old_pred_span not in gold and pred_span in gold:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
