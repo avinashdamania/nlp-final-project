@@ -558,6 +558,8 @@ def write_predictions(args, model, dataset, dataset_truecase):
                         first_interrogative = word
                         break
 
+                old_topk = topk
+
                 print(question_words)
 
                 topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text)
@@ -571,10 +573,9 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 # probably want additional logic to not completely sort based on number of common entities
                 # some sort of voting system that takes into account both probabilities and num common entities?
-                temp2 = topk[0]
+                temp2 = topk[0] if topk else old_topk[0]
                 final_start, final_end = temp2[1], temp2[2]
                 
-
                 # Grab predicted span.
                 # pred_span = ' '.join(passage[start_index:(end_index + 1)])
                 pred_span = ' '.join(passage[final_start:(final_end + 1)])
