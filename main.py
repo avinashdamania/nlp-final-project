@@ -446,19 +446,19 @@ def compare_interrogatives(increments, topk, passage_truecase, first_interrogati
                 matching_ents += 1
            # print(ent.text, ": ", ent.label_)
         
-        heapq.heappush(heap, (matching_ents, max_prob, start_index, end_index))
+        heapq.heappush(heap, (-matching_ents, max_prob, start_index, end_index))
 
     
     multipliers = calculate_multiplier_increments(increments)
-    second_heap = []
+    result_list = []
     topk_index = 0
     while heap:
         temp = heapq.heappop(heap)
-        temp = (-(temp[1] * multipliers[topk_index]), temp[2], temp[3])
-        second_heap.append(temp)
+        temp = ((temp[1] * multipliers[topk_index]), temp[2], temp[3])
+        result_list.append(temp)
         topk_index += 1
-    second_heap.sort()
-    return second_heap
+    result_list.sort()
+    return result_list
 
                 
 
@@ -477,19 +477,19 @@ def count_common_entities(increments, topk, passage_truecase, question_has_ents,
             for ent in ans_ents:
                 if ent.text in question_ents_text:
                     common_ents += 1
-            heapq.heappush(heap, (common_ents, max_prob, start_index, end_index))
+            heapq.heappush(heap, (-common_ents, max_prob, start_index, end_index))
 
     
     multipliers = calculate_multiplier_increments(increments)
-    second_heap = []
+    result_list = []
     topk_index = 0
     while heap:
         temp = heapq.heappop(heap)
-        temp = (-(temp[1] * multipliers[topk_index]), temp[2], temp[3])
-        second_heap.append(temp)
+        temp = ((temp[1] * multipliers[topk_index]), temp[2], temp[3])
+        result_list.append(temp)
         topk_index += 1
-    second_heap.sort()
-    return second_heap
+    result_list.sort()
+    return result_list
         
 
 def write_predictions(args, model, dataset, dataset_truecase):
@@ -574,7 +574,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 # some sort of voting system that takes into account both probabilities and num common entities?
                 temp2 = topk[0] if topk else old_topk[0]
                 final_start, final_end = temp2[1], temp2[2]
-                
+
                 # Grab predicted span.
                 # pred_span = ' '.join(passage[start_index:(end_index + 1)])
                 pred_span = ' '.join(passage[final_start:(final_end + 1)])
