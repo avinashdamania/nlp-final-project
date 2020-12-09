@@ -569,7 +569,7 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
 
                 old_topk = topk
                 lower = 1.0
-                upper = 1.3 
+                upper = 1.5
 
                 #print(question_words)
 
