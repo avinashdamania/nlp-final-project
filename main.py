@@ -429,6 +429,8 @@ def get_full_sentence(passage, start_index, end_index):
 #i.e 'Where' to Location or Geographic Place
 #Weights higher if answer contains entity of the appropriate type
 def compare_interrogatives(increments, topk, passage_truecase, first_interrogative, lower, upper):
+    print("compare interrogatives")
+    print(topk)
     heap = []
 
     if not first_interrogative == 'who' and not first_interrogative == 'where':
@@ -458,12 +460,15 @@ def compare_interrogatives(increments, topk, passage_truecase, first_interrogati
         result_list.append(temp)
         topk_index += 1
     result_list.sort(reverse=True)
+    print(result_list)
     return result_list
 
                 
 
 
 def count_common_entities(increments, topk, passage_truecase, question_has_ents, question_ents_text, lower, upper):
+    print("count common entities")
+    print(topk)
     heap = []
     for max_prob, start_index, end_index in topk:
         pred_span = str(passage_truecase[start_index:(end_index + 1)])
@@ -489,6 +494,7 @@ def count_common_entities(increments, topk, passage_truecase, question_has_ents,
         result_list.append(temp)
         topk_index += 1
     result_list.sort(reverse=True)
+    print(result_list)
     return result_list
         
 
