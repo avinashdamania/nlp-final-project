@@ -423,6 +423,33 @@ def get_full_sentence(passage, start_index, end_index):
         last_index += 1
 
     return first_index, last_index
+
+def count_common_entities(topk, passage_truecase, question_has_ents, question_ents_text):
+    heap = []
+    for max_prob, start_index, end_index in topk:
+        pred_span = str(passage_truecase[start_index:(end_index + 1)])
+
+        if question_has_ents:
+            sent_start, sent_end = get_full_sentence(passage_truecase, start_index, end_index)
+            full_sent = str(passage_truecase[sent_start+1:(sent_end + 1)])
+            ans_ents = sp(full_sent)
+
+            common_ents = 0
+            for ent in ans_ents:
+                if ent.text in question_ents_text:
+                    common_ents += 1
+            heapq.heappush(heap, (common_ents, max_prob, start_index, end_index))
+    
+    multipliers = calculate_multiplier_increments(5)
+    second_heap = []
+    topk_index = 0
+    while heap:
+        temp = heapq.heappop(heap)
+        temp = (-(temp[1] * multipliers[topk_index]), temp[2], temp[3])
+        second_heap.append(temp)
+        topk_index += 1
+    second_heap.sort()
+    return second_heap
         
 
 def write_predictions(args, model, dataset, dataset_truecase):
@@ -500,42 +527,14 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 #create mapping from question interrogative to NER
 
-                heap = []
-
-                # probs = []
-                # for temp in topk:
-                #     probs.append(temp[0])
-                # print("PROBS:", probs)
-
-                for max_prob, start_index, end_index in topk:
-                    pred_span = str(passage_truecase[start_index:(end_index + 1)])
-
-                    if question_has_ents:
-                        sent_start, sent_end = get_full_sentence(passage_truecase, start_index, end_index)
-                        full_sent = str(passage_truecase[sent_start+1:(sent_end + 1)])
-                        ans_ents = sp(full_sent)
-
-                        common_ents = 0
-                        for ent in ans_ents:
-                            if ent.text in question_ents_text:
-                                common_ents += 1
-                        heapq.heappush(heap, (common_ents, max_prob, start_index, end_index))
-                
-                multipliers = calculate_multiplier_increments(5)
-                second_heap = []
-                topk_index = 0
-                while heap:
-                    temp = heapq.heappop(heap)
-                    temp = (-(temp[1] * multipliers[topk_index]), temp[2], temp[3])
-                    heapq.heappush(second_heap, temp)
-                    topk_index += 1
+               second_heap = count_common_entities(topk, passage_truecase, question_has_ents, question_ents_text)
                 # print(second_heap)
 
                 # probably want additional logic to not completely sort based on number of common entities
                 # some sort of voting system that takes into account both probabilities and num common entities?
                 final_start, final_end = -1, -1
                 if second_heap:
-                    temp2 = heapq.heappop(second_heap)
+                    temp2 = second_heap[0]
                     final_start, final_end = temp2[1], temp2[2]
                 else:
                     temp2 = topk[0]
