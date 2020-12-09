@@ -597,7 +597,6 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
                 old_pred_span = ' '.join(passage[old_start:(old_end + 1)])
 
                 print("hmm:", gold, old_pred_span, pred_span)
-                print("asdf")
 
                 if old_pred_span not in gold and pred_span in gold:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -618,6 +617,18 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
                     print("NEW ANSWER:", pred_span)
                     print("GOLD:", gold)
                     print("********************************")
+                
+                if pred_span not in gold and old_pred_span not in gold:
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    print("we both got it wrong")
+                    print("CONTEXT:", " ".join(passage_truecase))
+                    print("QUESTION:", " ".join(question))
+                    print("OLD ANSWER:", old_pred_span)
+                    print("NEW ANSWER:", pred_span)
+                    print("GOLD:", gold)
+                    print("********************************")
+
+
 
 
                 # Add prediction to outputs.
