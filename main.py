@@ -596,7 +596,7 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
                 old_start, old_end = answer_would_have_been[1], answer_would_have_been[2]
                 old_pred_span = ' '.join(passage[old_start:(old_end + 1)])
 
-                print("hmm:", gold, old_pred_span, pred_span)
+                # print("hmm:", gold, old_pred_span, pred_span)
 
                 if old_pred_span not in gold and pred_span in gold:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
