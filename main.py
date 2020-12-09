@@ -411,6 +411,7 @@ def evaluate(args, epoch, model, dataset):
 
 
 def get_full_sentence(passage, start_index, end_index):
+    print(passage, start_index)
     #Maybe devalue sentences ending in question mark?
 
     first_index = start_index
