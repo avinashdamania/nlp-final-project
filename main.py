@@ -640,6 +640,7 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
 
 
                 # Add prediction to outputs.
+                pred_span = pred_span.replace(" - ", "-")
                 outputs.append({'qid': qid, 'answer': pred_span})
 
     # Write predictions to output file.
