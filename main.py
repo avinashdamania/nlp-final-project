@@ -518,6 +518,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
                         common_ents = 0
                         for ent in ans_ents:
                             if ent in question_ents:
+                                print("ASKDLFJAKL;SJDF;KLAJLKSDFJS")
                                 common_ents += 1
                         heapq.heappush(heap, (common_ents, max_prob, start_index, end_index))
                 
