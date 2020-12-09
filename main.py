@@ -517,6 +517,16 @@ def write_predictions(args, model, dataset, dataset_truecase):
                             if ent in question_ents:
                                 common_ents += 1
                         heapq.heappush(heap, (common_ents, max_prob, start_index, end_index))
+                
+                multipliers = calculate_multiplier_increments(5)
+                second_heap = []
+                i = 0
+                while heap:
+                    temp = heapq.heappop(heap)
+                    temp = (-(temp[1] * multipliers[i]), temp[2], temp[3])
+                    heapq.heappush(second_heap, temp)
+                    i += 1
+                print(second_heap)
 
                 # probably want additional logic to not completely sort based on number of common entities
                 # some sort of voting system that takes into account both probabilities and num common entities?
