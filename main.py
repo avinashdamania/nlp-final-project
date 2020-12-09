@@ -539,6 +539,7 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
                 _, passage_truecase, question_truecase, _, _ = dataset_truecase.samples[sample_index]
                 
                 gold = answers_and_gold[qid]
+                gold = [g.lower() for g in gold]
 
                 # Unpack start and end probabilities. Find the constrained
                 # (start, end) pair that has the highest joint probability.
@@ -643,7 +644,7 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
 
 
                 # Add prediction to outputs.
-                
+                # pred_span = pred_span.replace(" - ", "-")
                 outputs.append({'qid': qid, 'answer': pred_span})
 
     # Write predictions to output file.
