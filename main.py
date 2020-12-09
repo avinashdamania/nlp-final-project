@@ -575,11 +575,11 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
 
                 # print("1:", topk)
 
-                # topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text, lower, upper)
+                topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text, lower, upper)
 
                 # print("2:", topk)
 
-                # topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative, lower, upper)
+                topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative, lower, upper)
 
                 # print("3:", topk)
 
@@ -610,25 +610,25 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
                 #     print("GOLD:", gold)
                 #     print("********************************")
 
-                # if old_pred_span not in gold and pred_span in gold:
-                #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                #     print("we improved on the baseline!")
-                #     print("CONTEXT:", " ".join(passage_truecase))
-                #     print("QUESTION:", " ".join(question))
-                #     print("OLD ANSWER:", old_pred_span)
-                #     print("NEW ANSWER:", pred_span)
-                #     print("GOLD:", gold)
-                #     print("********************************")
+                if old_pred_span not in gold and pred_span in gold:
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    print("we improved on the baseline!")
+                    print("CONTEXT:", " ".join(passage_truecase))
+                    print("QUESTION:", " ".join(question))
+                    print("OLD ANSWER:", old_pred_span)
+                    print("NEW ANSWER:", pred_span)
+                    print("GOLD:", gold)
+                    print("********************************")
 
-                # if pred_span not in gold and old_pred_span in gold:
-                #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                #     print("we did worse than the baseline :(")
-                #     print("CONTEXT:", " ".join(passage_truecase))
-                #     print("QUESTION:", " ".join(question))
-                #     print("OLD ANSWER:", old_pred_span)
-                #     print("NEW ANSWER:", pred_span)
-                #     print("GOLD:", gold)
-                #     print("********************************")
+                if pred_span not in gold and old_pred_span in gold:
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    print("we did worse than the baseline :(")
+                    print("CONTEXT:", " ".join(passage_truecase))
+                    print("QUESTION:", " ".join(question))
+                    print("OLD ANSWER:", old_pred_span)
+                    print("NEW ANSWER:", pred_span)
+                    print("GOLD:", gold)
+                    print("********************************")
                 
                 # if pred_span not in gold and old_pred_span not in gold:
                 #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
