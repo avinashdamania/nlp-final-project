@@ -182,5 +182,7 @@ def calculate_multiplier_increments(k, lower=1.0, upper=1.5):
     while curr < upper:
         curr += increment
         multipliers.append(curr)
+    if not multipliers:
+        return [1.0 for _ in range(k)]
     return multipliers[::-1]
 

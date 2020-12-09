@@ -480,7 +480,7 @@ def count_common_entities(increments, topk, passage_truecase, question_has_ents,
             heapq.heappush(heap, (-common_ents, max_prob, start_index, end_index))
 
     
-    multipliers = calculate_multiplier_increments(increments, 1.0, 1.1)
+    multipliers = calculate_multiplier_increments(increments, 1.0, 1.0)
     result_list = []
     topk_index = 0
     while heap:
@@ -558,6 +558,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
                         break
 
                 old_topk = topk
+                
 
                 #print(question_words)
 
@@ -580,6 +581,18 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 # Grab predicted span.
                 # pred_span = ' '.join(passage[start_index:(end_index + 1)])
                 pred_span = ' '.join(passage[final_start:(final_end + 1)])
+
+                answer_would_have_been = old_topk[0]
+                old_start, old_end = answer_would_have_been[1], answer_would_have_been[2]
+                old_pred_span = ' '.join(passage[old_start:(old_end + 1)])
+
+                if old_pred_span != pred_span:
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    print("QUESTION:", question)
+                    print("OLD ANSWER:", old_pred_span)
+                    print("NEW ANSWER:", pred_span)
+                    print("********************************")
+
 
                 # Add prediction to outputs.
                 outputs.append({'qid': qid, 'answer': pred_span})

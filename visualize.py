@@ -53,7 +53,13 @@ parser.add_argument(
     default=64,
     help='maximum question length (do not change!)',
 )
-
+parser.add_argument(
+    '--start',
+    type=int,
+    default=0,
+    required=False,
+    help='start index',
+)
 
 def _build_string(tokens):
     """Builds string from token list."""
@@ -92,7 +98,8 @@ def main(args):
     if args.shuffle:
         random.shuffle(samples)
 
-    vis_samples = samples[:args.samples]
+    # print("NUMBER OF TOTAL POSSIBLE SAMPLES:", len(samples))
+    vis_samples = samples[args.start:args.start + args.samples]
 
     print()
     print('-' * RULE_LENGTH)
