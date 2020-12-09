@@ -479,8 +479,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 question = question_truecase
                 question_words = [x.lower() for x in question]
                 question_ents = set(sp(" ".join(question)).ents)
-                question_ents_text = [ent.text for ent in question_ents]
-                print(question_ents_text)
+                question_ents_text = set([ent.text for ent in question_ents])
                 question_has_ents = len(question_ents) > 0
                 
                 #Finds the first interrogative (who, where, what) in the sentence
@@ -518,7 +517,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                         common_ents = 0
                         for ent in ans_ents:
-                            if ent in question_ents:
+                            if ent.text in question_ents_text:
                                 print("ASKDLFJAKL;SJDF;KLAJLKSDFJS")
                                 common_ents += 1
                         heapq.heappush(heap, (common_ents, max_prob, start_index, end_index))
