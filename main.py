@@ -565,7 +565,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 old_topk = topk
                 lower = 1.0
-                upper = 1.1
+                upper = 1.5
                 
 
                 #print(question_words)
@@ -596,7 +596,8 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 if old_pred_span != pred_span:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                    print("QUESTION:", question)
+                    print("CONTEXT:", " ".join(passage_truecase))
+                    print("QUESTION:", " ".join(question))
                     print("OLD ANSWER:", old_pred_span)
                     print("NEW ANSWER:", pred_span)
                     print("********************************")
