@@ -449,7 +449,7 @@ def compare_interrogatives(increments, topk, passage_truecase, first_interrogati
         heapq.heappush(heap, (-matching_ents, max_prob, start_index, end_index))
 
     
-    multipliers = calculate_multiplier_increments(increments)
+    multipliers = calculate_multiplier_increments(increments, 1.0, 1.1)
     result_list = []
     topk_index = 0
     while heap:
@@ -480,7 +480,7 @@ def count_common_entities(increments, topk, passage_truecase, question_has_ents,
             heapq.heappush(heap, (-common_ents, max_prob, start_index, end_index))
 
     
-    multipliers = calculate_multiplier_increments(increments)
+    multipliers = calculate_multiplier_increments(increments, 1.0, 1.1)
     result_list = []
     topk_index = 0
     while heap:
@@ -561,13 +561,15 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 #print(question_words)
 
+                # print("1:", topk)
+
                 topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text)
 
-                # print(topk)
+                # print("2:", topk)
 
                 topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative)
 
-                # print(topk)
+                # print("3:", topk)
 
 
                 # probably want additional logic to not completely sort based on number of common entities
