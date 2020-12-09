@@ -52,10 +52,10 @@ import spacy
 sp = spacy.load("en_core_web_sm")
 
 interrogative_dict = {
-  "who": "PERSON",
-  "where": "GRE",
-  "what": "",
-  "which": ""
+  "who": ["PERSON","NORP","ORG"],
+  "where": ["FAC","GRE","LOC"],
+  "what": [],
+  "which": []
 }
 
 import heapq
@@ -424,7 +424,47 @@ def get_full_sentence(passage, start_index, end_index):
 
     return first_index, last_index
 
-def count_common_entities(topk, passage_truecase, question_has_ents, question_ents_text):
+
+#Matches first question interrogative to appropriate entity labels in the answer
+#i.e 'Where' to Location or Geographic Place
+#Weights higher if answer contains entity of the appropriate type
+def compare_interrogatives(increments, topk, passage_truecase, first_interrogative):
+    heap = []
+
+    if not first_interrogative == 'who' and not first_interrogative == 'where':
+        return sorted(topk)
+
+
+    for max_prob, start_index, end_index in topk:
+        pred_span = str(passage_truecase[start_index:(end_index + 1)])
+        ans_ents = sp(pred_span).ents
+        print(first_interrogative)
+        #list of entity labels that match the interrogative
+        mapped_ents = interrogative_dict[first_interrogative]
+
+        matching_ents = 0
+        for ent in ans_ents:
+            if ent.label_ in mapped_ents:
+                matching_ents += 1
+            print(ent.label_)
+            heapq.heappush(heap, (matching_ents, max_prob, start_index, end_index))
+
+    
+    multipliers = calculate_multiplier_increments(increments)
+    second_heap = []
+    topk_index = 0
+    while heap:
+        temp = heapq.heappop(heap)
+        temp = (-(temp[1] * multipliers[topk_index]), temp[2], temp[3])
+        second_heap.append(temp)
+        topk_index += 1
+    second_heap.sort()
+    return second_heap
+
+                
+
+
+def count_common_entities(increments, topk, passage_truecase, question_has_ents, question_ents_text):
     heap = []
     for max_prob, start_index, end_index in topk:
         pred_span = str(passage_truecase[start_index:(end_index + 1)])
@@ -432,15 +472,16 @@ def count_common_entities(topk, passage_truecase, question_has_ents, question_en
         if question_has_ents:
             sent_start, sent_end = get_full_sentence(passage_truecase, start_index, end_index)
             full_sent = str(passage_truecase[sent_start+1:(sent_end + 1)])
-            ans_ents = sp(full_sent)
+            ans_ents = sp(full_sent).ents
 
             common_ents = 0
             for ent in ans_ents:
                 if ent.text in question_ents_text:
                     common_ents += 1
             heapq.heappush(heap, (common_ents, max_prob, start_index, end_index))
+
     
-    multipliers = calculate_multiplier_increments(5)
+    multipliers = calculate_multiplier_increments(increments)
     second_heap = []
     topk_index = 0
     while heap:
@@ -516,29 +557,22 @@ def write_predictions(args, model, dataset, dataset_truecase):
                     if word in interrogative_dict:
                         first_interrogative = word
                         break
-                
-                # if first_interrogative == 'who':
-                #     print('who')
 
+                print(question_words)
 
-                #who - PERSON, NORP, ORG
-                #where - FAC, GPE, LOC
-                    # still weight but not as high EVENT
+                topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text)
 
-                #create mapping from question interrogative to NER
+                print(topk)
 
-                second_heap = count_common_entities(topk, passage_truecase, question_has_ents, question_ents_text)
-                # print(second_heap)
+                topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative)
+
+                print(topk)
+
 
                 # probably want additional logic to not completely sort based on number of common entities
                 # some sort of voting system that takes into account both probabilities and num common entities?
-                final_start, final_end = -1, -1
-                if second_heap:
-                    temp2 = second_heap[0]
-                    final_start, final_end = temp2[1], temp2[2]
-                else:
-                    temp2 = topk[0]
-                    final_start, final_end = temp2[1], temp2[2]
+                temp2 = topk[0]
+                final_start, final_end = temp2[1], temp2[2]
                 
 
                 # Grab predicted span.
