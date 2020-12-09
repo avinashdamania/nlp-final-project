@@ -536,10 +536,10 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 final_start, final_end = -1, -1
                 if second_heap:
                     temp2 = heapq.heappop(second_heap)
-                    final_start, final_end = temp[1], temp[2]
+                    final_start, final_end = temp2[1], temp2[2]
                 else:
                     temp2 = topk[0]
-                    final_start, final_end = temp[1], temp[2]
+                    final_start, final_end = temp2[1], temp2[2]
                 
 
                 # Grab predicted span.
