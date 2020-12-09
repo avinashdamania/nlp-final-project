@@ -595,7 +595,7 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
                 answer_would_have_been = old_topk[0]
                 old_start, old_end = answer_would_have_been[1], answer_would_have_been[2]
                 old_pred_span = ' '.join(passage[old_start:(old_end + 1)])
-
+                print("GOLD OUTPUT:", gold)
                 if old_pred_span != pred_span:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                     print("CONTEXT:", " ".join(passage_truecase))
