@@ -47,6 +47,7 @@ from data import QADataset, Tokenizer, Vocabulary
 
 from model import BaselineReader
 from utils import cuda, search_span_endpoints, topk_span_endpoints, unpack, calculate_multiplier_increments
+from evaluate import read_answers
 
 import spacy
 sp = spacy.load("en_core_web_sm")
@@ -498,7 +499,7 @@ def count_common_entities(increments, topk, passage_truecase, question_has_ents,
     return result_list
         
 
-def write_predictions(args, model, dataset, dataset_truecase):
+def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
     """
     Writes model predictions to an output file. The official QA metrics (EM/F1)
     can be computed using `evaluation.py`. 
@@ -536,6 +537,8 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 sample_index = args.batch_size * i + j
                 qid, passage, _, _, _ = dataset.samples[sample_index]
                 _, passage_truecase, question_truecase, _, _ = dataset_truecase.samples[sample_index]
+                
+                gold = answers_and_gold[qid]
 
                 # Unpack start and end probabilities. Find the constrained
                 # (start, end) pair that has the highest joint probability.
@@ -599,6 +602,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
                     print("QUESTION:", " ".join(question))
                     print("OLD ANSWER:", old_pred_span)
                     print("NEW ANSWER:", pred_span)
+                    print("GOLD:", gold)
                     print("********************************")
 
 
@@ -707,7 +711,8 @@ def main(args):
     if args.do_test:
         # Write predictions to the output file. Use the printed command
         # below to obtain official EM/F1 metrics.
-        write_predictions(args, model, dev_dataset, dev_dataset_truecase)
+        answers_and_gold = read_answers(args.dev_path)
+        write_predictions(args, model, dev_dataset, dev_dataset_truecase, answers_and_gold)
         eval_cmd = (
             'python3 evaluate.py '
             f'--dataset_path {args.dev_path} '
