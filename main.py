@@ -563,11 +563,11 @@ def write_predictions(args, model, dataset, dataset_truecase):
 
                 topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text)
 
-               # print(topk)
+               print(topk)
 
                 topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative)
 
-               # print(topk)
+               print(topk)
 
 
                 # probably want additional logic to not completely sort based on number of common entities
