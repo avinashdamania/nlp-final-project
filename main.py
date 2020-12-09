@@ -579,7 +579,7 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
 
                 # print("2:", topk)
 
-                topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative, lower, upper)
+                # topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative, lower, upper)
 
                 # print("3:", topk)
 
@@ -600,15 +600,15 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
                 pred_span = pred_span.replace(" - ", "-")
                 old_pred_span = old_pred_span.replace(" - ", "-")
 
-                if old_pred_span != pred_span:
-                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                    print("we got different answers")
-                    print("CONTEXT:", " ".join(passage_truecase))
-                    print("QUESTION:", " ".join(question))
-                    print("OLD ANSWER:", old_pred_span)
-                    print("NEW ANSWER:", pred_span)
-                    print("GOLD:", gold)
-                    print("********************************")
+                # if old_pred_span != pred_span:
+                #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                #     print("we got different answers")
+                #     print("CONTEXT:", " ".join(passage_truecase))
+                #     print("QUESTION:", " ".join(question))
+                #     print("OLD ANSWER:", old_pred_span)
+                #     print("NEW ANSWER:", pred_span)
+                #     print("GOLD:", gold)
+                #     print("********************************")
 
                 if old_pred_span not in gold and pred_span in gold:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
