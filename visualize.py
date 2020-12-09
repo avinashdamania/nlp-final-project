@@ -118,13 +118,6 @@ def main(args):
         print()
 
 
-        # testing spacy
-        print("TESTING SPACY")
-        doc = sp("".join("Apple is looking at buying U.K. startup for $1 billion"))
-        for ent in doc.ents:
-            print(ent.text)
-
-
 
         print('-' * RULE_LENGTH)
         print()
