@@ -428,7 +428,7 @@ def get_full_sentence(passage, start_index, end_index):
 #Matches first question interrogative to appropriate entity labels in the answer
 #i.e 'Where' to Location or Geographic Place
 #Weights higher if answer contains entity of the appropriate type
-def compare_interrogatives(increments, topk, passage_truecase, first_interrogative):
+def compare_interrogatives(increments, topk, passage_truecase, first_interrogative, lower, upper):
     heap = []
 
     if not first_interrogative == 'who' and not first_interrogative == 'where':
@@ -449,7 +449,7 @@ def compare_interrogatives(increments, topk, passage_truecase, first_interrogati
         heapq.heappush(heap, (-matching_ents, max_prob, start_index, end_index))
 
     
-    multipliers = calculate_multiplier_increments(increments, 1.0, 1.1)
+    multipliers = calculate_multiplier_increments(increments, lower, upper)
     result_list = []
     topk_index = 0
     while heap:
@@ -480,7 +480,7 @@ def count_common_entities(increments, topk, passage_truecase, question_has_ents,
             heapq.heappush(heap, (-common_ents, max_prob, start_index, end_index))
 
     
-    multipliers = calculate_multiplier_increments(increments, 1.0, 1.0)
+    multipliers = calculate_multiplier_increments(increments, lower, upper)
     result_list = []
     topk_index = 0
     while heap:
@@ -558,17 +558,19 @@ def write_predictions(args, model, dataset, dataset_truecase):
                         break
 
                 old_topk = topk
+                lower = 1.0
+                upper = 1.0
                 
 
                 #print(question_words)
 
                 # print("1:", topk)
 
-                topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text)
+                topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text, lower, upper)
 
                 # print("2:", topk)
 
-                topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative)
+                topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative, lower, upper)
 
                 # print("3:", topk)
 
