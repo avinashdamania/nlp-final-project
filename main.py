@@ -485,7 +485,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 for word in question_words:
                     if word in interrogative_dict:
                         first_interrogative = word
-                        print(word, ': ', question_words)
+                        # print(word, ': ', question_words)
                         break
                 
                 
