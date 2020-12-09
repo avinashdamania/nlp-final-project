@@ -463,7 +463,7 @@ def compare_interrogatives(increments, topk, passage_truecase, first_interrogati
                 
 
 
-def count_common_entities(increments, topk, passage_truecase, question_has_ents, question_ents_text):
+def count_common_entities(increments, topk, passage_truecase, question_has_ents, question_ents_text, lower, upper):
     heap = []
     for max_prob, start_index, end_index in topk:
         pred_span = str(passage_truecase[start_index:(end_index + 1)])
