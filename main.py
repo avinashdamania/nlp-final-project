@@ -569,17 +569,17 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
 
                 old_topk = topk
                 lower = 1.0
-                upper = 100.0
+                upper = 1.1
 
                 #print(question_words)
 
                 # print("1:", topk)
 
-                # topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text, lower, upper)
+                topk = count_common_entities(5, topk, passage_truecase, question_has_ents, question_ents_text, lower, upper)
 
                 # print("2:", topk)
 
-                topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative, lower, upper)
+                # topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative, lower, upper)
 
                 # print("3:", topk)
 
