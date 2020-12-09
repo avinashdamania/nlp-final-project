@@ -457,7 +457,7 @@ def compare_interrogatives(increments, topk, passage_truecase, first_interrogati
         temp = ((temp[1] * multipliers[topk_index]), temp[2], temp[3])
         result_list.append(temp)
         topk_index += 1
-    result_list.sort()
+    result_list.sort(reverse=True)
     return result_list
 
                 
@@ -488,7 +488,7 @@ def count_common_entities(increments, topk, passage_truecase, question_has_ents,
         temp = ((temp[1] * multipliers[topk_index]), temp[2], temp[3])
         result_list.append(temp)
         topk_index += 1
-    result_list.sort()
+    result_list.sort(reverse=True)
     return result_list
         
 
