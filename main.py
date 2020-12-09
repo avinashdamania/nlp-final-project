@@ -479,6 +479,7 @@ def write_predictions(args, model, dataset, dataset_truecase):
                 question = question_truecase
                 question_words = [x.lower() for x in question]
                 question_ents = set(sp(" ".join(question)).ents)
+                print(question_ents)
                 question_has_ents = len(question_ents) > 0
                 
                 first_interrogative = ''
