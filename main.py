@@ -579,7 +579,7 @@ def write_predictions(args, model, dataset, dataset_truecase, answers_and_gold):
 
                 # print("2:", topk)
 
-                topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative, lower, upper)
+                # topk = compare_interrogatives(5, topk, passage_truecase, first_interrogative, lower, upper)
 
                 # print("3:", topk)
 
